@@ -6,7 +6,6 @@ import { escapeRegex, generateSlug, serializeData } from "@/lib/utils";
 import Book from "@/database/models/book.model";
 import BookSegment from "@/database/models/book-segment.model";
 import mongoose from "mongoose";
-import { getUserPlan } from "@/lib/subscription.server";
 
 export const getAllBooks = async (search?: string) => {
   try {
@@ -81,8 +80,8 @@ export const createBook = async (data: CreateBook) => {
     }
 
     // Todo: Check subscription limits before creating a book
-    const { getUserPlan } = await import("@/lib/subscription.server");
-    const { PLAN_LIMITS } = await import("@/lib/subscription-constants");
+    // const { getUserPlan } = await import("@/lib/subscription.server");
+    // const { PLAN_LIMITS } = await import("@/lib/subscription-constants");
 
     const { auth } = await import("@clerk/nextjs/server");
     const { userId } = await auth();
@@ -91,21 +90,19 @@ export const createBook = async (data: CreateBook) => {
       return { success: false, error: "Unauthorized" };
     }
 
-    const plan = await getUserPlan();
-    const limits = PLAN_LIMITS[plan];
-
-    const bookCount = await Book.countDocuments({ clerkId: userId });
-
-    if (bookCount >= limits.maxBooks) {
-      const { revalidatePath } = await import("next/cache");
-      revalidatePath("/");
-
-      return {
-        success: false,
-        error: `You have reached the maximum number of books allowed for your ${plan} plan (${limits.maxBooks}). Please upgrade to add more books.`,
-        isBillingError: true,
-      };
-    }
+    // Subscription check disabled for now - implement later
+    // const plan = await getUserPlan();
+    // const limits = PLAN_LIMITS[plan];
+    // const bookCount = await Book.countDocuments({ clerkId: userId });
+    // if (bookCount >= limits.maxBooks) {
+    //   const { revalidatePath } = await import("next/cache");
+    //   revalidatePath("/");
+    //   return {
+    //     success: false,
+    //     error: `You have reached the maximum number of books allowed for your ${plan} plan (${limits.maxBooks}). Please upgrade to add more books.`,
+    //     isBillingError: true,
+    //   };
+    // }
 
     const book = await Book.create({
       ...data,

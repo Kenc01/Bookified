@@ -7,8 +7,14 @@ export async function POST(request: Request): Promise<NextResponse> {
     try {
         const body = (await request.json()) as HandleUploadBody;
 
+        const token = process.env.BLOB_READ_WRITE_TOKEN;
+        
+        if (!token) {
+            throw new Error('Missing BLOB_READ_WRITE_TOKEN environment variable');
+        }
+
         const jsonResponse = await handleUpload({
-            token: process.env.bookified_READ_WRITE_TOKEN,
+            token: token,
             body,
             request,
             onBeforeGenerateToken: async () => {

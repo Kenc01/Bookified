@@ -162,6 +162,7 @@ const UploadForm = () => {
         throw new Error("Failed to save book segments");
       }
 
+      toast.success("Book uploaded successfully!");
       form.reset();
       router.push("/");
     } catch (error) {
