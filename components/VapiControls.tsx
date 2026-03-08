@@ -11,8 +11,9 @@ const VapiControls = ({ book }: { book: IBook }) => {
     status,
     isActive,
     messages,
-    currentMessage,
+    currentAssistantMessage,
     currentUserMessage,
+    currentMessages,
     duration,
     start,
     stop,
@@ -40,7 +41,11 @@ const VapiControls = ({ book }: { book: IBook }) => {
                 disabled={status === "connecting"}
                 className={`vapi-mic-btn shadow-md !w-[60px] !h-[60px] z-10 ${isActive ? "vapi-mic-btn-active" : "vapi-mic-btn-inactive"}`}
               >
-                <MicOff className="size-7 text-[#212a3b]" />
+                {isActive ? (
+                  <MicOff className="size-7 text-[#212a3b]" />
+                ) : (
+                  <Mic className="size-7 text-[#212a3b]" />
+                )}
               </button>
             </div>
           </div>
@@ -74,7 +79,8 @@ const VapiControls = ({ book }: { book: IBook }) => {
       <div className="vapi-transcript-wrapper">
         <Transcript
           messages={messages}
-          currentMessage={currentMessage}
+          currentMessages={currentMessages}
+          currentAssistantMessage={currentAssistantMessage}
           currentUserMessage={currentUserMessage}
         />
       </div>

@@ -6,23 +6,25 @@ import { Messages } from "@/types";
 
 interface TranscriptProps {
   messages: Messages[];
-  currentMessage: string;
+  currentMessages: Messages[];
+  currentAssistantMessage: string;
   currentUserMessage: string;
 }
 
 const Transcript = ({
   messages,
-  currentMessage,
+  currentMessages,
+  currentAssistantMessage,
   currentUserMessage,
 }: TranscriptProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, currentMessage, currentUserMessage]);
+  }, [messages, currentAssistantMessage, currentUserMessage]);
 
   const isEmpty =
-    messages.length === 0 && !currentMessage && !currentUserMessage;
+    messages.length === 0 && !currentAssistantMessage && !currentUserMessage;
 
   return (
     <div className="transcript-container min-h-[400px]">
@@ -71,10 +73,10 @@ const Transcript = ({
           )}
 
           {/* Render streaming assistant message */}
-          {currentMessage && (
+          {currentAssistantMessage && (
             <div className="transcript-message transcript-message-assistant">
               <div className="transcript-bubble transcript-bubble-assistant">
-                {currentMessage}
+                {currentAssistantMessage}
                 <span className="transcript-cursor">|</span>
               </div>
             </div>
