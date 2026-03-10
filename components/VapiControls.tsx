@@ -1,12 +1,14 @@
 "use client";
 
+import { useState } from "react";
 import useVapi from "@/hooks/useVapi";
 import { IBook } from "@/types";
-import { Mic, MicOff } from "lucide-react";
+import { Mic, MicOff, Send } from "lucide-react";
 import Image from "next/image";
 import Transcript from "./Transcript";
 
 const VapiControls = ({ book }: { book: IBook }) => {
+  const [textMessage, setTextMessage] = useState("");
   const {
     status,
     isActive,
@@ -17,11 +19,26 @@ const VapiControls = ({ book }: { book: IBook }) => {
     duration,
     start,
     stop,
+    sendMessage,
     clearError,
     //limitError,
     //isBillingError,
     //maxDurationSeconds,
   } = useVapi(book);
+
+  const handleSendMessage = () => {
+    if (textMessage.trim()) {
+      sendMessage(textMessage);
+      setTextMessage("");
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
   return (
     <>
       <div className="vapi-header-card w-full">
@@ -83,6 +100,27 @@ const VapiControls = ({ book }: { book: IBook }) => {
           currentAssistantMessage={currentAssistantMessage}
           currentUserMessage={currentUserMessage}
         />
+      </div>
+
+      {/* Text Message Input */}
+      <div className="mt-4 flex gap-2">
+        <input
+          type="text"
+          value={textMessage}
+          onChange={(e) => setTextMessage(e.target.value)}
+          onKeyPress={handleKeyPress}
+          placeholder="Type a message..."
+          disabled={!isActive}
+          className="flex-1 px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-800 placeholder-gray-500 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[#212a3b]"
+        />
+        <button
+          onClick={handleSendMessage}
+          disabled={!isActive || !textMessage.trim()}
+          className="px-6 py-3 bg-[#212a3b] text-white rounded-lg hover:bg-[#3d485e] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+        >
+          <Send size={18} />
+          Send
+        </button>
       </div>
     </>
   );
